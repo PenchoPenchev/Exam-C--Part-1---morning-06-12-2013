@@ -1,0 +1,36 @@
+namespace TheHorror
+{
+    using System;
+    using System.Text;
+
+    class TheHorror
+    {
+        static void Main()
+        {
+            string input = Console.ReadLine();
+
+            string inputRemovedMinuses = input.Replace("-","");
+
+            int totalAmount = 0;
+            int sum = 0;
+
+            for (int i = 0; i < input.Length; i++)
+            {
+                if (i % 2 == 0)
+                {
+                    for (int ii = 48; ii <= 57; ii++)
+                    {
+                        if (input[i] == (char)ii)
+                        {
+                            sum += (int)Char.GetNumericValue(input[i]);
+                            totalAmount++;
+                            break;
+                        }
+                    }    
+                }
+            }
+
+            Console.WriteLine("{0} {1}", totalAmount, sum);
+        }
+    }
+}

@@ -1,0 +1,74 @@
+namespace DiamondTrolls
+{
+    using System;
+    using System.Text;
+
+    class DiamondTrolls
+    {
+        static void Main()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            int n = int.Parse(Console.ReadLine());
+
+            int width = 2 * n + 1;
+            int height = (6 + ((n - 3) / 2) * 3);
+            int firstLineDots = (width - n) / 2;
+            int dotsCounter = 0;
+            int insideDots = firstLineDots - 1;
+            bool isDownPart = false;
+
+            for (int h = 0; h < height; h++)
+            {
+                if (h == 0)
+                {
+                    sb.Append(new string('.', firstLineDots - h));
+                    sb.Append(new string('*', n));
+                    sb.Append(new string('.', firstLineDots - h));
+                }
+                else if (h < height - 1)
+                {
+                    if (firstLineDots > 1 && !isDownPart)
+                    {
+                        firstLineDots--;
+
+                        sb.Append(new string('.', firstLineDots));
+                        sb.Append(new string('*', 1));
+                        sb.Append(new string('.', insideDots));
+                        sb.Append(new string('*', 1));
+                        sb.Append(new string('.', insideDots));
+                        sb.Append(new string('*', 1));
+                        sb.Append(new string('.', firstLineDots));
+                        insideDots++;
+                    }
+                    else if (firstLineDots == 1 && !isDownPart)
+                    {
+                        sb.Append(new string('*', width));
+                        isDownPart = true;
+                    }
+                    else if (isDownPart)
+                    {
+                        insideDots--;
+                        sb.Append(new string('.', firstLineDots));
+                        sb.Append(new string('*', 1));
+                        sb.Append(new string('.', insideDots));
+                        sb.Append(new string('*', 1));
+                        sb.Append(new string('.', insideDots));
+                        sb.Append(new string('*', 1));
+                        sb.Append(new string('.', firstLineDots));
+                        firstLineDots++;
+                    }
+                }
+                else
+                {
+                    sb.Append(new string('.', (width - 1) / 2));
+                    sb.Append(new string('*', 1));
+                    sb.Append(new string('.', (width - 1) / 2));
+                }
+
+                Console.WriteLine(sb.ToString());
+                sb.Clear();
+            }
+        }
+    }
+}

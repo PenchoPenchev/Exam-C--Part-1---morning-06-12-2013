@@ -1,0 +1,43 @@
+namespace Problem_3_6_9
+{
+    using System;
+    using System.Numerics;
+
+    class Problem_3_6_9
+    {
+        static void Main()
+        {
+            long A = long.Parse(Console.ReadLine());
+            uint B = uint.Parse(Console.ReadLine());
+            long C = long.Parse(Console.ReadLine());
+
+            BigInteger R = 0;
+
+            if (B == 3)
+            {
+                R = A + C;
+            }
+
+            if (B == 6)
+            {
+                R = A * C;
+            }
+
+            if (B == 9)
+            {
+                R = A % C;
+            }
+
+            if (R % 3 == 0)
+            {
+                Console.WriteLine(R / 3);
+            }
+            else
+            {
+                Console.WriteLine(R % 3);
+            }
+
+            Console.WriteLine(R);
+        }
+    }
+}

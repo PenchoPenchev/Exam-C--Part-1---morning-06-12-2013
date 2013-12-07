@@ -1,0 +1,490 @@
+namespace XExpression
+{
+    using System;
+    using System.Text;
+
+    class XExpression
+    {
+        
+        static void Main()
+        {
+            string input = Console.ReadLine();
+
+            string expression = input.Trim(' ');
+
+            char plus = '+';
+            char minus = '-';
+            char divide = '/';
+            char multiply = '*';
+            char leftBracket = '(';
+            char rightBracket = ')';
+            bool isThereOpenBracket = false;
+            double leftNumber = 0;
+            double rightNumber = 0;
+            double result = 0;
+
+            for (int step = 0; step < expression.Length; )
+            {
+                char sign = '+';
+
+                //Check if we have open bracket
+                if (input[step] == leftBracket)
+                {
+                    isThereOpenBracket = true;
+                    step++;
+                }
+                else if (input[step] == rightBracket)
+                {
+                    isThereOpenBracket = false;
+                    step++;
+                }
+
+                if (!isThereOpenBracket)
+                {
+                    // Getting left number value
+                    if (leftNumber == 0)
+                    {
+                        for (int ii = 48; ii <= 57; ii++)
+                        {
+                            if (input[step] == (char)ii)
+                            {
+                                leftNumber = (int)Char.GetNumericValue(input[step]);
+                                step++;
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        leftNumber = result;
+                    }
+                }
+                else
+                {
+                    int currentStep = step;
+                    leftNumber = calcExpressionInBrackets(currentStep, isThereOpenBracket, input);
+                    step = stepsAfterBrackets(currentStep, isThereOpenBracket, input);
+                    isThereOpenBracket = false;
+                }
+
+                //Check if we have open bracket
+                if (input[step] == leftBracket)
+                {
+                    isThereOpenBracket = true;
+                    step++;
+                }
+                else if (input[step] == rightBracket)
+                {
+                    isThereOpenBracket = false;
+                    step++;
+                }
+
+                // Get sign type
+                if (input[step] == plus)
+                {
+                    sign = plus;
+                    step++;
+                }
+                else if (input[step] == minus)
+                {
+                    sign = minus;
+                    step++;
+                }
+                else if (input[step] == divide)
+                {
+                    sign = divide;
+                    step++;
+                }
+                else if (input[step] == multiply)
+                {
+                    sign = multiply;
+                    step++;
+                }
+
+                //Check if we have an open bracket
+                if (input[step] == leftBracket)
+                {
+                    isThereOpenBracket = true;
+                    step++;
+                }
+                //Check if we have to open a bracket
+                if (input[step] == rightBracket)
+                {
+                    isThereOpenBracket = false;
+                    step++;
+                }
+
+                //Check if we have an open bracket
+                if (input[step] == leftBracket)
+                {
+                    isThereOpenBracket = true;
+                    step++;
+                }
+                else if (input[step] == rightBracket)
+                {
+                    isThereOpenBracket = false;
+                    step++;
+                }
+
+                // If no open bracket available till this moment or all open brackets are closed
+                if (!isThereOpenBracket)
+                {
+                    // Get sign type
+                    if (input[step] == plus)
+                    {
+                        sign = plus;
+                        step++;
+                    }
+                    else if (input[step] == minus)
+                    {
+                        sign = minus;
+                        step++;
+                    }
+                    else if (input[step] == divide)
+                    {
+                        sign = divide;
+                        step++;
+                    }
+                    else if (input[step] == multiply)
+                    {
+                        sign = multiply;
+                        step++;
+                    }
+
+                    //Check if we have open bracket
+                    if (input[step] == leftBracket)
+                    {
+                        isThereOpenBracket = true;
+                        step++;
+                    }
+                    else if (input[step] == rightBracket)
+                    {
+                        isThereOpenBracket = false;
+                        step++;
+                    }
+
+                    // Get right number value
+                    for (int ii = 48; ii <= 57; ii++)
+                    {
+                        if (input[step] == (char)ii)
+                        {
+                            rightNumber = (double)Char.GetNumericValue(input[step]);
+                            step++;
+                            break;
+                        }
+                    }
+
+                    //Check if we have open bracket
+                    if (input[step] == leftBracket)
+                    {
+                        isThereOpenBracket = true;
+                        step++;
+                    }
+                    else if (input[step] == rightBracket)
+                    {
+                        isThereOpenBracket = false;
+                        step++;
+                    }
+                }
+                else
+                {
+                    if (result != 0)
+                    {
+                        leftNumber = result;    
+                    }
+                    int currentStep = step;
+                    rightNumber = calcExpressionInBrackets(currentStep, isThereOpenBracket, input);
+                    step = stepsAfterBrackets(currentStep, isThereOpenBracket, input);
+                    isThereOpenBracket = false;
+                }
+
+                // Do math operation
+                if (sign == plus)
+                {
+                    result = leftNumber + rightNumber;
+                }
+                else if (sign == minus)
+                {
+                    result = leftNumber - rightNumber;
+                }
+                else if (sign == divide)
+                {
+                    result = leftNumber / rightNumber;
+                }
+                else if (sign == multiply)
+                {
+                    result = leftNumber * rightNumber;
+                }
+
+                if (input[step] == '=')
+                {
+                    Console.WriteLine("{0:F2}", result);
+                    break;
+                }
+            }
+        }
+
+        public static double calcExpressionInBrackets(int step, bool isThereOpenBracket, string input)
+        {
+            char plus = '+';
+            char minus = '-';
+            char divide = '/';
+            char multiply = '*';
+            char leftBracket = '(';
+            char rightBracket = ')';
+            double bracketRightNumber = 0;
+            double bracketLeftNumber = 0;
+            double bracketResult = 0;
+            // Open bracket available
+            while (isThereOpenBracket)
+            {
+                // Sub variables used only inside the brackets
+                char bracketSign = '+';
+                
+                // Get left number value
+                if (bracketLeftNumber == 0)
+                {
+                    for (int ii = 48; ii <= 57; ii++)
+                    {
+                        if (input[step] == (char)ii)
+                        {
+                            bracketLeftNumber = (double)Char.GetNumericValue(input[step]);
+                            step++;
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    bracketLeftNumber = bracketResult;
+                }
+
+                //Check if we have open bracket
+                if (input[step] == leftBracket)
+                {
+                    isThereOpenBracket = true;
+                    step++;
+                }
+                else if (input[step] == rightBracket)
+                {
+                    isThereOpenBracket = false;
+                    step++;
+                }
+
+                if (isThereOpenBracket)
+                {
+                    if (input[step] == plus)
+                    {
+                        bracketSign = plus;
+                        step++;
+                    }
+                    else if (input[step] == minus)
+                    {
+                        bracketSign = minus;
+                        step++;
+                    }
+                    else if (input[step] == divide)
+                    {
+                        bracketSign = divide;
+                        step++;
+                    }
+                    else if (input[step] == multiply)
+                    {
+                        bracketSign = multiply;
+                        step++;
+                    }
+
+                    //Check if we have open bracket
+                    if (input[step] == leftBracket)
+                    {
+                        isThereOpenBracket = true;
+                        step++;
+                    }
+                    else if (input[step] == rightBracket)
+                    {
+                        isThereOpenBracket = false;
+                        step++;
+                    }
+
+                    for (int ii = 48; ii <= 57; ii++)
+                    {
+                        if (input[step] == (char)ii)
+                        {
+                            bracketRightNumber = (double)Char.GetNumericValue(input[step]);
+                            step++;
+                            break;
+                        }
+                    }    
+                }
+
+                if (bracketSign == plus)
+                {
+                    bracketResult = bracketLeftNumber + bracketRightNumber;
+                }
+                else if (bracketSign == minus)
+                {
+                    bracketResult = bracketLeftNumber - bracketRightNumber;
+                }
+                else if (bracketSign == divide)
+                {
+                    bracketResult = bracketLeftNumber / bracketRightNumber;
+                }
+                else if (bracketSign == multiply)
+                {
+                    bracketResult = bracketLeftNumber * bracketRightNumber;
+                }
+
+                //Check if we have open bracket
+                if (input[step] == leftBracket)
+                {
+                    isThereOpenBracket = true;
+                    step++;
+                }
+                else if (input[step] == rightBracket)
+                {
+                    isThereOpenBracket = false;
+                    bracketRightNumber = bracketResult;
+                    step++;
+                }
+
+                if (!isThereOpenBracket)
+                {
+                    bracketRightNumber = bracketResult;
+                }
+            }
+            return bracketRightNumber;
+        }
+
+        public static int stepsAfterBrackets(int step, bool isThereOpenBracket, string input)
+        {
+            char plus = '+';
+            char minus = '-';
+            char divide = '/';
+            char multiply = '*';
+            char leftBracket = '(';
+            char rightBracket = ')';
+            double bracketRightNumber = 0;
+            double bracketLeftNumber = 0;
+            double bracketResult = 0;
+            // Open bracket available
+            while (isThereOpenBracket)
+            {
+                // Sub variables used only inside the brackets
+                char bracketSign = '+';
+
+                // Get left number value
+                if (bracketLeftNumber == 0)
+                {
+                    for (int ii = 48; ii <= 57; ii++)
+                    {
+                        if (input[step] == (char)ii)
+                        {
+                            bracketLeftNumber = (double)Char.GetNumericValue(input[step]);
+                            step++;
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    bracketLeftNumber = bracketResult;
+                }
+
+                //Check if we have open bracket
+                if (input[step] == leftBracket)
+                {
+                    isThereOpenBracket = true;
+                    step++;
+                }
+                else if (input[step] == rightBracket)
+                {
+                    isThereOpenBracket = false;
+                    step++;
+                }
+
+                if (isThereOpenBracket)
+                {
+                    if (input[step] == plus)
+                    {
+                        bracketSign = plus;
+                        step++;
+                    }
+                    else if (input[step] == minus)
+                    {
+                        bracketSign = minus;
+                        step++;
+                    }
+                    else if (input[step] == divide)
+                    {
+                        bracketSign = divide;
+                        step++;
+                    }
+                    else if (input[step] == multiply)
+                    {
+                        bracketSign = multiply;
+                        step++;
+                    }
+
+                    //Check if we have open bracket
+                    if (input[step] == leftBracket)
+                    {
+                        isThereOpenBracket = true;
+                        step++;
+                    }
+                    else if (input[step] == rightBracket)
+                    {
+                        isThereOpenBracket = false;
+                        step++;
+                    }
+
+                    for (int ii = 48; ii <= 57; ii++)
+                    {
+                        if (input[step] == (char)ii)
+                        {
+                            bracketRightNumber = (double)Char.GetNumericValue(input[step]);
+                            step++;
+                            break;
+                        }
+                    }
+                }
+
+                if (bracketSign == plus)
+                {
+                    bracketResult = bracketLeftNumber + bracketRightNumber;
+                }
+                else if (bracketSign == minus)
+                {
+                    bracketResult = bracketLeftNumber - bracketRightNumber;
+                }
+                else if (bracketSign == divide)
+                {
+                    bracketResult = bracketLeftNumber / bracketRightNumber;
+                }
+                else if (bracketSign == multiply)
+                {
+                    bracketResult = bracketLeftNumber * bracketRightNumber;
+                }
+
+                //Check if we have open bracket
+                if (input[step] == leftBracket)
+                {
+                    isThereOpenBracket = true;
+                    step++;
+                }
+                else if (input[step] == rightBracket)
+                {
+                    isThereOpenBracket = false;
+                    bracketRightNumber = bracketResult;
+                    step++;
+                }
+
+                if (!isThereOpenBracket)
+                {
+                    bracketRightNumber = bracketResult;
+                }
+            }
+  
+            return step;
+        }
+    }
+}
